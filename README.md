@@ -1,4 +1,4 @@
-# asanareport
+# Asana CSV Report
 Current Status: Able to connect to the Asana API using Node.js, so far just manipulating the base script. Once I've written out a CSV creation script I'll write a framework to generate that report in a web app.
 Date: 1/9/2018 
 # Setup
