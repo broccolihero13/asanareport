@@ -3,7 +3,7 @@ const req = require('request');
 const fs = require('fs');
 let getToken = process.env.asanaTok;
 //user variables
-let projectID = `384181481773069`;
+let projectID = `358074576413536`;
 
 let token = `Bearer ${getToken}`;
 let projectUrl = `https://app.asana.com/api/1.0/projects/${projectID}/tasks`;
@@ -108,31 +108,44 @@ let getTaskTime = (taskId)=>{
   });
 };
 
+let timePromise = ()=>{
+return new Promise((res,rej)=>{
+  let count = -1;
+  taskArr.forEach((task,index, array)=>{
+    getTaskTime(task).then((time)=>{
+      count++;
+      console.log(`${count} of ${array.length - 1}`);
+      totalTime = totalTime + time;
+      if(count === array.length - 1){
+        setTimeout(()=>{
+          res("done");
+        }, 500)
+      }
+    })
+    .catch((err)=>rej(err));
+  });
+});
+}
+
+
 callPromise.then((response)=>{
   response.data.forEach((task)=>{
     taskArr.push(task.id);
   });
-  taskArr.forEach((task,index, array)=>{
-    getTaskTime(task).then((time)=>{
-      totalTime = totalTime + time;
-      if(index === array.length - 1){
-        //setTimeout to put this call at the end of the execution stack
-        //Next step is to pass this data to a function that will create a line on a CSV file
-        setTimeout(()=>{
-          console.log(`Total Time: ${totalTime}`);
-          console.log(`Process Time: ${procTime}`);
-          console.log(`Canvas Instance Management Time: ${instManagementTime}`);
-          console.log(`Scripting Time: ${scriptTime}`);
-          console.log(`Project Management Time: ${projectManagementTime}`);
-          console.log(`Resource Gathering Time: ${resourceGatheringTime}`);
-          console.log(`Misc Time: ${miscTime}`);
-          console.log(`Quizzes Time: ${quizzesTime}`);
-          console.log(`Gauge Time: ${gaugeTime}`);
-          console.log(`Meeting/Calls Time: ${meetingTime}`);
-          console.log(`LTI Setup Time: ${ltiTime}`);
-        },1000);
-      }
-    })
-    .catch((err)=>console.log(err));
-  });
+  console.log(taskArr);
+  timePromise().then((msg)=>{
+    console.log(msg);
+    console.log(`Total Time: ${totalTime}`);
+    console.log(`Process Time: ${procTime}`);
+    console.log(`Canvas Instance Management Time: ${instManagementTime}`);
+    console.log(`Scripting Time: ${scriptTime}`);
+    console.log(`Project Management Time: ${projectManagementTime}`);
+    console.log(`Resource Gathering Time: ${resourceGatheringTime}`);
+    console.log(`Misc Time: ${miscTime}`);
+    console.log(`Quizzes Time: ${quizzesTime}`);
+    console.log(`Gauge Time: ${gaugeTime}`);
+    console.log(`Meeting/Calls Time: ${meetingTime}`);
+    console.log(`LTI Setup Time: ${ltiTime}`);
+  }).catch((err)=>console.log(err));
 }).catch((err)=>console.log(err));
+
