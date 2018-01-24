@@ -8,7 +8,8 @@ let projectID = `358074576413536`;
 let token = `Bearer ${getToken}`;
 let projectUrl = `https://app.asana.com/api/1.0/projects/${projectID}/tasks`;
 
-let taskArr = [];
+let totalTasks = 0;
+let taskArrObj = {};
 let totalTime = 0.0;
 let procTime = 0.0;
 let instManagementTime = 0.0;
@@ -90,14 +91,17 @@ let getTaskTime = (taskId)=>{
     },(error, response, body)=>{
       if(error){
         reject(error);
+      } else if(response.statusCode == "429"){
+        reject("too many requests");
       } else {
-        console.log(body.data.tags);
+        console.log(response.statusCode);
         let getAddedTime = body.data.custom_fields.filter((obj)=>{
           return obj.id == '427581708538669';
         });
         let addedTime = getAddedTime[0].number_value;
         if(addedTime != null){
           categorizeTime(addedTime,body.data.tags[0].id);
+          totalTasks++;
           resolve(addedTime);
         } else {
           resolve(0.0);
@@ -108,34 +112,50 @@ let getTaskTime = (taskId)=>{
   });
 };
 
-let timePromise = ()=>{
-return new Promise((res,rej)=>{
-  let count = -1;
-  taskArr.forEach((task,index, array)=>{
-    getTaskTime(task).then((time)=>{
-      count++;
-      console.log(`${count} of ${array.length - 1}`);
-      totalTime = totalTime + time;
-      if(count === array.length - 1){
-        setTimeout(()=>{
-          res("done");
-        }, 500)
-      }
-    })
-    .catch((err)=>rej(err));
+let timePromise = (arr)=>{
+  return new Promise((res,rej)=>{
+    let count = -1;
+    arr.forEach((task,index, array)=>{
+        getTaskTime(task).then((time)=>{
+          count++;
+          console.log(`${count} of ${array.length - 1}`);
+          totalTime = totalTime + time;
+          if(count === array.length - 1){
+            setTimeout(()=>{
+              res("done");
+            }, 500)
+          }
+        }).catch((err)=>{
+          rej(err)
+        })
+    });
   });
-});
 }
 
 
 callPromise.then((response)=>{
+  let numOfTasks = 0;
+  let numOfArrs = 1;
+  taskArrObj[`hundredArr${numOfArrs}`] = [];
   response.data.forEach((task)=>{
-    taskArr.push(task.id);
+    numOfTasks++
+    if(numOfTasks < 51){
+      taskArrObj[`hundredArr${numOfArrs}`].push(task.id);
+    } else {
+      taskArrObj[`hundredArr${numOfArrs}`].push(task.id);
+      numOfArrs++
+      taskArrObj[`hundredArr${numOfArrs}`] = [];
+      numOfTasks = 0;
+    }
   });
-  console.log(taskArr);
-  timePromise().then((msg)=>{
-    console.log(msg);
-    console.log(`Total Time: ${totalTime}`);
+
+  timePromise(taskArrObj.hundredArr1).then(()=>{
+    timePromise(taskArrObj.hundredArr2).then(()=>{
+      timePromise(taskArrObj.hundredArr3).then(()=>{
+        timePromise(taskArrObj.hundredArr4).then(()=>{
+          timePromise(taskArrObj.hundredArr5).then(()=>{
+            console.log(taskArrObj);
+            console.log(`Total Time: ${totalTime}`);
     console.log(`Process Time: ${procTime}`);
     console.log(`Canvas Instance Management Time: ${instManagementTime}`);
     console.log(`Scripting Time: ${scriptTime}`);
@@ -146,6 +166,12 @@ callPromise.then((response)=>{
     console.log(`Gauge Time: ${gaugeTime}`);
     console.log(`Meeting/Calls Time: ${meetingTime}`);
     console.log(`LTI Setup Time: ${ltiTime}`);
-  }).catch((err)=>console.log(err));
+    console.log(`Total Tasks: ${totalTasks}`);
+          })
+        })
+      })
+    
+    })
+      }).catch((err)=>console.log(err));
 }).catch((err)=>console.log(err));
 
