@@ -132,7 +132,6 @@ let timePromise = (arr)=>{
   });
 }
 
-
 callPromise.then((response)=>{
   let numOfTasks = 0;
   let numOfArrs = 1;
@@ -154,19 +153,18 @@ callPromise.then((response)=>{
       timePromise(taskArrObj.hundredArr3).then(()=>{
         timePromise(taskArrObj.hundredArr4).then(()=>{
           timePromise(taskArrObj.hundredArr5).then(()=>{
-            console.log(taskArrObj);
             console.log(`Total Time: ${totalTime}`);
-    console.log(`Process Time: ${procTime}`);
-    console.log(`Canvas Instance Management Time: ${instManagementTime}`);
-    console.log(`Scripting Time: ${scriptTime}`);
-    console.log(`Project Management Time: ${projectManagementTime}`);
-    console.log(`Resource Gathering Time: ${resourceGatheringTime}`);
-    console.log(`Misc Time: ${miscTime}`);
-    console.log(`Quizzes Time: ${quizzesTime}`);
-    console.log(`Gauge Time: ${gaugeTime}`);
-    console.log(`Meeting/Calls Time: ${meetingTime}`);
-    console.log(`LTI Setup Time: ${ltiTime}`);
-    console.log(`Total Tasks: ${totalTasks}`);
+            console.log(`Process Time: ${procTime}`);
+            console.log(`Canvas Instance Management Time: ${instManagementTime}`);
+            console.log(`Scripting Time: ${scriptTime}`);
+            console.log(`Project Management Time: ${projectManagementTime}`);
+            console.log(`Resource Gathering Time: ${resourceGatheringTime}`);
+            console.log(`Misc Time: ${miscTime}`);
+            console.log(`Quizzes Time: ${quizzesTime}`);
+            console.log(`Gauge Time: ${gaugeTime}`);
+            console.log(`Meeting/Calls Time: ${meetingTime}`);
+            console.log(`LTI Setup Time: ${ltiTime}`);
+            console.log(`Total Tasks: ${totalTasks}`);
           })
         })
       })
