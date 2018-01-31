@@ -69,10 +69,6 @@ let callPromise = new Promise((resolve, reject)=>{
       } else if (response.statusCode != "200") {
         reject(`Something went wrong with the API call, it returned with a ${response.statusCode} status code.`)
       } else {
-        // body.forEach((task)=>{
-        //   allTasks.push(task);
-        // })
-        // resolve(allTasks)
         resolve(body);
       }
     }) 
